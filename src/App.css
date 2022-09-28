@@ -1,5 +1,18 @@
-.App {
+.App,
+.container {
+  display: flex;
   text-align: center;
+  flex-direction: column;
+}
+
+img {
+  height: 120px;
+}
+
+.card,
+div.not {
+  display: flex;
+  justify-content: center;
 }
 
 .App-logo {
@@ -32,7 +45,19 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
+  }
+}
+
+.text {
+  color: red;
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
   }
 }
