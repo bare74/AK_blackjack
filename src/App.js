@@ -61,7 +61,7 @@ const App = () => {
     let player = [];
     let dealer = [];
 
-    let draw = await axios.get(`${API}/deck/l1k9vouc33bg/draw/?count=3`);
+    let draw = await axios.get(`${API}/deck/fl47rstjf4v9/draw/?count=3`);
 
     player.push(draw.data.cards[0]);
     player.push(draw.data.cards[1]);
@@ -81,14 +81,14 @@ const App = () => {
 
   //player new card
   const playerHit = async () => {
-    let draw = await axios.get(`${API}/deck/l1k9vouc33bg/draw/?count=1`);
+    let draw = await axios.get(`${API}/deck/fl47rstjf4v9/draw/?count=1`);
     setPlayerDeck((playerDeck) => [...playerDeck, draw.data.cards[0]]);
     console.log("Player", draw);
   };
 
   //player stands
   const playerStands = async () => {
-    let draw = await axios.get(`${API}/deck/l1k9vouc33bg/draw/?count=1`);
+    let draw = await axios.get(`${API}/deck/fl47rstjf4v9/draw/?count=1`);
     setDealerDeck((dealerDeck) => [...dealerDeck, draw.data.cards[0]]);
     console.log(dealerDeck);
   };
