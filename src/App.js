@@ -7,71 +7,61 @@ import "./App.css";
 const API = "https://deckofcardsapi.com/api";
 
 const App = () => {
-  const [deckId, setDeckId] = useState();
   const [playerDeck, setPlayerDeck] = useState([]);
   const [dealerDeck, setDealerDeck] = useState([]);
   const [winner, setWinner] = useState();
   const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
-    const gameResult = async () => {
-      let sum_Dealer = localStorage.getItem("sum_Dealer");
-      let sum_Player = localStorage.getItem("sum_Player");
+    let sum_Dealer = localStorage.getItem("sum_Dealer");
+    let sum_Player = localStorage.getItem("sum_Player");
 
-      if (sum_Player > 21 || sum_Dealer === 21) {
-        setWinner("Dealer");
-        setGameOver(true);
-      }
-      if (sum_Player === 21 || (sum_Dealer > 21 && sum_Player < 21)) {
-        setWinner("Spiller");
-        setGameOver(true);
-      }
-    };
-    gameResult();
+    if (sum_Player > 21 || sum_Dealer === 21) {
+      setWinner("Dealer");
+      setGameOver(true);
+    }
+    if (sum_Player === 21 || (sum_Dealer > 21 && sum_Player < 21)) {
+      setWinner("Spiller");
+      setGameOver(true);
+    }
   });
 
   //convert card value to number
   const getCardVal = (card) => {
-    let card_val = card.value;
+    let cardValue = card.value;
 
-    if (card_val === "KING" || card_val === "QUEEN" || card_val === "JACK") {
-      card_val = 10;
-    } else if (card_val === "ACE") {
-      card_val = 11;
+    if (cardValue === "JACK" || cardValue === "QUEEN" || cardValue === "KING") {
+      cardValue = 10;
+    } else if (cardValue === "ACE") {
+      cardValue = 11;
     } else {
-      card_val = parseInt(card_val);
+      cardValue = parseInt(cardValue);
     }
-    return card_val;
+    return cardValue;
   };
 
   //calculate dealer sum
   let cardSumDealer = 0;
   dealerDeck.forEach((card) => {
-    let val = getCardVal(card);
-    cardSumDealer = cardSumDealer + val;
+    let value = getCardVal(card);
+    cardSumDealer = cardSumDealer + value;
+    localStorage.setItem("sum_Dealer", cardSumDealer);
   });
-  console.log("Dealer sum: ", cardSumDealer);
-  localStorage.setItem("sum_Dealer", cardSumDealer);
 
   //calculate player sum
   let cardSumPlayer = 0;
   playerDeck.forEach((card) => {
-    let val = getCardVal(card);
-    cardSumPlayer = cardSumPlayer + val;
+    let value = getCardVal(card);
+    cardSumPlayer = cardSumPlayer + value;
+    localStorage.setItem("sum_Player", cardSumPlayer);
   });
-  console.log("Player Sum: ", cardSumPlayer);
-  localStorage.setItem("sum_Player", cardSumPlayer);
 
   //start game
   const dealGame = async () => {
     let player = [];
     let dealer = [];
-    let response = await axios.get(`${API}/deck/new/shuffle/?deck_count=6`);
 
-    let deck_id = await response.data.deck_id;
-    setDeckId(deck_id);
-
-    let draw = await axios.get(`${API}/deck/${deck_id}/draw/?count=3`);
+    let draw = await axios.get(`${API}/deck/l1k9vouc33bg/draw/?count=3`);
 
     player.push(draw.data.cards[0]);
     player.push(draw.data.cards[1]);
@@ -80,36 +70,27 @@ const App = () => {
     setPlayerDeck(player);
   };
 
-  //reset game and localstorage
+  //reset game
   const resetGame = () => {
-    localStorage.clear();
     setDealerDeck([]);
     setPlayerDeck([]);
-    setDeckId();
     setWinner("");
     setGameOver(false);
+    localStorage.clear();
   };
 
   //player new card
   const playerHit = async () => {
-    let response = await axios.get(`${API}/deck/new/shuffle/?deck_count=6`);
-    let deck_id = await response.data.deck_id;
-    setDeckId(deck_id);
-    let draw = await axios.get(`${API}/deck/${deck_id}/draw/?count=1`);
+    let draw = await axios.get(`${API}/deck/l1k9vouc33bg/draw/?count=1`);
     setPlayerDeck((playerDeck) => [...playerDeck, draw.data.cards[0]]);
+    console.log("Player", draw);
   };
 
   //player stands
   const playerStands = async () => {
-    let cardsForDealer = playerDeck.length;
-
-    const response = await axios.get(
-      `${API}/deck/${deckId}/draw/?count=${cardsForDealer}`
-    );
-    for (let i = 0; i < cardsForDealer - 1; i++) {
-      let dealer_card = await response.data.cards[i];
-      setDealerDeck((dealerDeck) => [...dealerDeck, dealer_card]);
-    }
+    let draw = await axios.get(`${API}/deck/l1k9vouc33bg/draw/?count=1`);
+    setDealerDeck((dealerDeck) => [...dealerDeck, draw.data.cards[0]]);
+    console.log(dealerDeck);
   };
 
   const GameOver = ({ isGameOver }) => {

@@ -5,7 +5,13 @@ const PrimaryButton = (props) => {
 
   return (
     <button
-      style={{ fontSize: 20, color: "blue", margin: "10px" }}
+      style={{
+        fontSize: 20,
+        color: "black",
+        margin: "10px",
+        backgroundColor: "grey",
+        border: "1px solid black",
+      }}
       onClick={props.onClick}
       disabled={disabelBtn}
     >
