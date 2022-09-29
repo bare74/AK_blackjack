@@ -11,10 +11,12 @@ const App = () => {
   const [dealerDeck, setDealerDeck] = useState([]);
   const [winner, setWinner] = useState();
   const [gameOver, setGameOver] = useState(false);
+  const [deckId, setDeckId] = useState();
 
   useEffect(() => {
     let sum_Dealer = localStorage.getItem("sum_Dealer");
     let sum_Player = localStorage.getItem("sum_Player");
+    console.log(deckId);
 
     if (sum_Player > 21 || sum_Dealer === 21) {
       setWinner("Dealer");
@@ -60,8 +62,12 @@ const App = () => {
   const dealGame = async () => {
     let player = [];
     let dealer = [];
+    let response = await axios.get(`${API}/deck/new/shuffle/?deck_count=6`);
 
-    let draw = await axios.get(`${API}/deck/fl47rstjf4v9/draw/?count=3`);
+    let deck_id = await response.data.deck_id;
+    setDeckId(deck_id);
+
+    let draw = await axios.get(`${API}/deck/${deck_id}/draw/?count=3`);
 
     player.push(draw.data.cards[0]);
     player.push(draw.data.cards[1]);
@@ -77,18 +83,26 @@ const App = () => {
     setWinner("");
     setGameOver(false);
     localStorage.clear();
+    setDeckId();
   };
 
   //player new card
   const playerHit = async () => {
-    let draw = await axios.get(`${API}/deck/fl47rstjf4v9/draw/?count=1`);
+    let response = await axios.get(`${API}/deck/new/shuffle/?deck_count=6`);
+    let deck_id = await response.data.deck_id;
+    setDeckId(deck_id);
+
+    let draw = await axios.get(`${API}/deck/${deck_id}/draw/?count=1`);
     setPlayerDeck((playerDeck) => [...playerDeck, draw.data.cards[0]]);
     console.log("Player", draw);
   };
 
   //player stands
   const playerStands = async () => {
-    let draw = await axios.get(`${API}/deck/fl47rstjf4v9/draw/?count=1`);
+    let response = await axios.get(`${API}/deck/new/shuffle/?deck_count=6`);
+    let deck_id = await response.data.deck_id;
+    setDeckId(deck_id);
+    let draw = await axios.get(`${API}/deck/${deck_id}/draw/?count=1`);
     setDealerDeck((dealerDeck) => [...dealerDeck, draw.data.cards[0]]);
     console.log(dealerDeck);
   };
